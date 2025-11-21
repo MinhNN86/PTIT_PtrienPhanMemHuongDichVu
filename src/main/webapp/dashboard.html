@@ -4,121 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Student Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 2rem;
-            background-color: #f0f2f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-        }
-        button {
-            padding: 0.5rem 1rem;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #c82333;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Student List</h1>
-            <button onclick="logout()">Logout</button>
-        </header>
-        
-        <table id="studentTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Full Name</th>
-                    <th>Student Code</th>
-                    <th>Major</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be populated here -->
-            </tbody>
-        </table>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Student Management System</h1>
+            <div>
+                <span id="user-display" style="margin-right: 15px; font-weight: bold;"></span>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </div>
+
+        <!-- Student Management Section -->
+        <div class="section">
+            <h2>Students</h2>
+            
+            <div class="add-form admin-only">
+                <input type="text" id="fullName" placeholder="Full Name">
+                <input type="text" id="studentCode" placeholder="Student Code">
+                <input type="text" id="major" placeholder="Major">
+                <input type="password" id="password" placeholder="Password">
+                <button id="addStudentBtn">Add Student</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Full Name</th>
+                        <th>Major</th>
+                        <th class="admin-only">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    <!-- Data loaded by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Course Management Section -->
+        <div class="section">
+            <h2>Courses</h2>
+            
+            <div class="add-form admin-only">
+                <input type="text" id="courseName" placeholder="Course Name">
+                <input type="number" id="courseCredits" placeholder="Credits">
+                <select id="courseStatus">
+                    <option value="OPEN">OPEN</option>
+                    <option value="CLOSED">CLOSED</option>
+                </select>
+                <button id="addCourseBtn">Add Course</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Credits</th>
+                        <th>Status</th>
+                        <th class="admin-only">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="courseTableBody">
+                    <!-- Data loaded by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Finance Section (Admin Only) -->
+        <div class="section admin-only">
+            <h2>Tuition Calculation</h2>
+            <div class="add-form">
+                <input type="number" id="tuitionCredits" placeholder="Credits">
+                <select id="tuitionMajor">
+                    <option value="IT">IT</option>
+                    <option value="Business">Business</option>
+                    <option value="Other">Other</option>
+                </select>
+                <button id="calcTuitionBtn">Calculate</button>
+            </div>
+            <div style="margin-top: 10px; font-size: 18px;">
+                Result: <span id="tuitionResult" style="font-weight: bold; color: #007bff;">-</span>
+            </div>
+        </div>
+
     </div>
 
-    <script>
-        // Check if token exists
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = 'index.html';
-        }
-
-        async function fetchStudents() {
-            try {
-                const response = await fetch('/api/students', {
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-                });
-
-                if (response.ok) {
-                    const students = await response.json();
-                    const tbody = document.querySelector('#studentTable tbody');
-                    tbody.innerHTML = '';
-                    
-                    students.forEach(student => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${student.id}</td>
-                            <td>${student.fullName}</td>
-                            <td>${student.studentCode}</td>
-                            <td>${student.major}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else if (response.status === 401) {
-                    alert('Session expired. Please login again.');
-                    logout();
-                } else {
-                    console.error('Failed to fetch students');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            window.location.href = 'index.html';
-        }
-
-        // Initial fetch
-        fetchStudents();
-    </script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

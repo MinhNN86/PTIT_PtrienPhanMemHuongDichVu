@@ -15,22 +15,31 @@ import java.util.List;
 public class StudentResource {
 
     @GET
-    public List<Student> getAllStudents() {
+    public List<Student> getAllStudents(@QueryParam("studentCode") String studentCode) {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM students";
 
-        try (Connection conn = com.example.student.util.DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+        if (studentCode != null && !studentCode.isEmpty()) {
+            sql += " WHERE student_code = ?";
+        }
 
-            while (rs.next()) {
-                Student student = new Student();
-                student.setId(rs.getLong("id"));
-                student.setFullName(rs.getString("full_name"));
-                student.setStudentCode(rs.getString("student_code"));
-                student.setMajor(rs.getString("major"));
-                student.setPassword(rs.getString("password"));
-                students.add(student);
+        try (Connection conn = com.example.student.util.DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            if (studentCode != null && !studentCode.isEmpty()) {
+                stmt.setString(1, studentCode);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Student student = new Student();
+                    student.setId(rs.getLong("id"));
+                    student.setFullName(rs.getString("full_name"));
+                    student.setStudentCode(rs.getString("student_code"));
+                    student.setMajor(rs.getString("major"));
+                    student.setPassword(rs.getString("password"));
+                    students.add(student);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -25,8 +25,14 @@ student-management/
 │       └── DatabaseConnection.java     # Kết nối MySQL (JDBC)
 ├── src/main/webapp/
 │   ├── WEB-INF/web.xml                 # Descriptor triển khai Servlet
+│   ├── css/
+│   │   └── style.css                   # Global Styles
+│   ├── js/
+│   │   ├── api.js                      # API Wrapper
+│   │   ├── auth.js                     # Authentication Logic
+│   │   └── dashboard.js                # Dashboard Logic
 │   ├── index.html                      # Trang Login
-│   └── dashboard.html                  # Trang xem danh sách sinh viên
+│   └── dashboard.html                  # Trang Dashboard
 ├── database.sql                        # Script tạo database và dữ liệu mẫu
 ├── pom.xml                             # Quản lý dependency (Maven)
 └── README.md                           # Hướng dẫn sử dụng
