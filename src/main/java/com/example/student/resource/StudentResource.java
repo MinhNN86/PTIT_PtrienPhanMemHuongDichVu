@@ -15,19 +15,30 @@ import java.util.List;
 public class StudentResource {
 
     @GET
-    public List<Student> getAllStudents(@QueryParam("studentCode") String studentCode) {
+    public List<Student> getAllStudents(
+            @QueryParam("studentCode") String studentCode,
+            @QueryParam("courseId") Long courseId) {
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT * FROM students";
+        String sql = "SELECT * FROM students WHERE 1=1";
 
         if (studentCode != null && !studentCode.isEmpty()) {
-            sql += " WHERE student_code = ?";
+            sql += " AND student_code = ?";
+        }
+
+        if (courseId != null) {
+            sql += " AND course_id = ?";
         }
 
         try (Connection conn = com.example.student.util.DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            int paramIndex = 1;
             if (studentCode != null && !studentCode.isEmpty()) {
-                stmt.setString(1, studentCode);
+                stmt.setString(paramIndex++, studentCode);
+            }
+
+            if (courseId != null) {
+                stmt.setLong(paramIndex++, courseId);
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -38,6 +49,7 @@ public class StudentResource {
                     student.setStudentCode(rs.getString("student_code"));
                     student.setMajor(rs.getString("major"));
                     student.setPassword(rs.getString("password"));
+                    student.setCourseId(rs.getLong("course_id"));
                     students.add(student);
                 }
             }
@@ -49,7 +61,7 @@ public class StudentResource {
 
     @POST
     public Response addStudent(Student student) {
-        String sql = "INSERT INTO students (full_name, student_code, major, password) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO students (full_name, student_code, major, password, course_id) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = com.example.student.util.DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -58,6 +70,7 @@ public class StudentResource {
             stmt.setString(2, student.getStudentCode());
             stmt.setString(3, student.getMajor());
             stmt.setString(4, student.getPassword());
+            stmt.setObject(5, student.getCourseId());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -79,7 +92,7 @@ public class StudentResource {
     @PUT
     @Path("/{id}")
     public Response updateStudent(@PathParam("id") Long id, Student updatedStudent) {
-        String sql = "UPDATE students SET full_name = ?, student_code = ?, major = ?, password = ? WHERE id = ?";
+        String sql = "UPDATE students SET full_name = ?, student_code = ?, major = ?, password = ?, course_id = ? WHERE id = ?";
 
         try (Connection conn = com.example.student.util.DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -88,7 +101,8 @@ public class StudentResource {
             stmt.setString(2, updatedStudent.getStudentCode());
             stmt.setString(3, updatedStudent.getMajor());
             stmt.setString(4, updatedStudent.getPassword());
-            stmt.setLong(5, id);
+            stmt.setObject(5, updatedStudent.getCourseId());
+            stmt.setLong(6, id);
 
             int affectedRows = stmt.executeUpdate();
 

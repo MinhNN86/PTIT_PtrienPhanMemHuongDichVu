@@ -5,18 +5,19 @@ public class Student {
     private String fullName;
     private String studentCode;
     private String major;
-
     private String password;
+    private Long courseId;
 
     public Student() {
     }
 
-    public Student(Long id, String fullName, String studentCode, String major, String password) {
+    public Student(Long id, String fullName, String studentCode, String major, String password, Long courseId) {
         this.id = id;
         this.fullName = fullName;
         this.studentCode = studentCode;
         this.major = major;
         this.password = password;
+        this.courseId = courseId;
     }
 
     public Long getId() {
@@ -57,5 +58,13 @@ public class Student {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 }

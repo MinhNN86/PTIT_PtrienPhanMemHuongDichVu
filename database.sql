@@ -9,7 +9,9 @@ CREATE TABLE students (
     full_name VARCHAR(255) NOT NULL,
     student_code VARCHAR(50) NOT NULL UNIQUE,
     major VARCHAR(100),
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    course_id BIGINT,
+    FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
 -- Table: courses
@@ -21,10 +23,10 @@ CREATE TABLE IF NOT EXISTS courses (
 );
 
 -- Sample Data: students
-INSERT INTO students (full_name, student_code, major, password) VALUES 
-('Nguyen Van A', 'SV001', 'IT', '123456'),
-('Tran Thi B', 'SV002', 'Business', '123456'),
-('Le Van C', 'SV003', 'Graphic Design', '123456');
+INSERT INTO students (full_name, student_code, major, password, course_id) VALUES 
+('Nguyen Van A', 'SV001', 'IT', '123456', 1),
+('Tran Thi B', 'SV002', 'Business', '123456', 1),
+('Le Van C', 'SV003', 'Graphic Design', '123456', 3);
 
 -- Sample Data: courses
 INSERT INTO courses (name, credits, status) VALUES 
